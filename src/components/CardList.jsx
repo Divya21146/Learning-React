@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
 const CardList = () => {
-  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch('https://api.escuelajs.co/api/v1/categories')
+    fetch('https://dummyjson.com/products')
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch categories');
+          throw new Error('Failed to fetch products');
         }
         return response.json();
       })
-      .then(data => setCategories(data))
-      .catch(error => console.error('Error fetching categories:', error));
+      .then(data => setProducts(data.products))
+      .catch(error => console.error('Error fetching products:', error));
   }, []);
+
+  const renderCards = () => {
+    const cards = [];
+    for (let i = 0; i < 5 && i < products.length; i++) {
+      const product = products[i];
+      cards.push(
+        <div key={product.id} className="card">
+          <h2>{product.title}</h2>
+          <img src={product.thumbnail} alt={product.category} />
+          <p>{product.description}</p>
+          <p>Price: ${product.price}</p>
+        </div>
+      );
+    }
+    return cards;
+  };
 
   return (
     <div className="card-list">
-      {categories.map(category => (
-        <div key={category.id} className="card">
-          <h2>{category.name}</h2>
-          <img src={category.image} alt={category.name} />
-        </div>
-      ))}
+      {renderCards()}
     </div>
   );
 };
